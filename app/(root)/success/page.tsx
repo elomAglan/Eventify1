@@ -21,7 +21,7 @@ import jsPDF from "jspdf";
 interface PaymentDetails {
   eventTitle: string;
   quantity: number;
-  totalAmount: number;
+  totalAmount: number; // This will hold the amount in minor units as received from Stripe
   transactionId: string;
   userId: string;
 }
@@ -30,7 +30,7 @@ interface PaymentDetails {
 const ReceiptComponent = ({
   eventTitle,
   quantity,
-  totalAmountCFA,
+  totalAmountCFA, // This prop now expects the already formatted string
   transactionId,
   receiptLink,
   userId,
@@ -103,15 +103,16 @@ export default function SuccessPage() {
 
   // Formats currency for XOF (CFA Franc)
   const formatCFA = useCallback((amount: number) => {
-    // Note: Stripe amounts are usually in cents, so divide by 100 if that's the case.
-    // For example, if amount is 500000 (meaning 5000 CFA), it should be 5000.
-    const actualAmount = amount / 100; // Adjust if your amount is already in CFA
+    // --- CORRECTION APPLIQUÉE ICI ---
+    // Pour le Franc CFA (XOF), Stripe fournit déjà le montant dans l'unité principale.
+    // PAS BESOIN de diviser par 100 comme pour EUR/USD ou d'autres devises avec des sous-unités classiques.
+    const actualAmount = amount; // <-- Suppression de la division par 100
 
     return new Intl.NumberFormat("fr-TG", {
       style: "currency",
       currency: "XOF",
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 0, // XOF typically has no decimal places in practice
     }).format(actualAmount);
   }, []);
 
@@ -133,7 +134,7 @@ export default function SuccessPage() {
               data.session.line_items.data[0]?.description ||
               "Événement inconnu",
             quantity: data.session.line_items.data[0]?.quantity || 1,
-            totalAmount: data.paymentIntent.amount, // Amount in minor units (e.g., cents)
+            totalAmount: data.paymentIntent.amount, // Amount is in minor units (e.g., cents for USD/EUR, but in actual value for XOF)
             transactionId: data.paymentIntent.id,
             userId: data.session.metadata?.userId || "N/A",
           });
@@ -156,7 +157,7 @@ export default function SuccessPage() {
     fetchSessionDetails();
   }, [sessionId]);
 
-  // --- Print Function (Option B implemented) ---
+  // --- Print Function ---
   const handlePrint = () => {
     if (receiptRef.current) {
       const printWindow = window.open("", "", "height=600,width=800");
@@ -284,7 +285,7 @@ export default function SuccessPage() {
             <ReceiptComponent
               eventTitle={paymentDetails.eventTitle}
               quantity={paymentDetails.quantity}
-              totalAmountCFA={formatCFA(paymentDetails.totalAmount)}
+              totalAmountCFA={formatCFA(paymentDetails.totalAmount)} // Pass the formatted amount
               transactionId={paymentDetails.transactionId}
               receiptLink={qrCodeLink}
               userId={paymentDetails.userId}
