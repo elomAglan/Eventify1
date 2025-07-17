@@ -11,10 +11,16 @@ const notoSans = Noto_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "TickEvent",
+  title: "Eventify",
   description:
-    "TickEvent – A web app for discovering, creating, and managing event tickets.",
+    "Eventify – A web app for discovering, creating, and managing event tickets.",
+
+    icons: {
+    icon: "/favicon.png", // ou "/favicon.png"
+  },
 };
+
+
 
 export default function RootLayout({
   children,
