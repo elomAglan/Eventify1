@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Link from "next/link";
 import UserDropdown from "../user/user-dropdown";
+import Image from "next/image";
+
 import {
   Menu,
   Home,
@@ -32,13 +34,14 @@ export async function Header() {
     <header className="sticky top-0 z-50 border-b border-gray-100 bg-white shadow-lg transition-all duration-300 ease-in-out dark:border-gray-700 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between h-16">
         {/* Logo Eventify avec icône */}
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-3xl font-extrabold text-blue-600 hover:text-blue-700 transition-colors duration-200 tracking-tight dark:text-blue-400 dark:hover:text-blue-300"
-        >
-          <Sparkles className="h-8 w-8 text-blue-500" /> {/* Icône Sparkles */}
-          Eventify
-        </Link>
+      <Link
+       href="/"
+       className="flex items-center gap-2 text-3xl font-extrabold text-blue-600 hover:text-blue-700 transition-colors duration-200 tracking-tight dark:text-blue-400 dark:hover:text-blue-300"
+      >
+     <Image src="/favicon.png" alt="Logo" width={32} height={32} />
+     Eventify
+    </Link>
+
 
         {/* Navigation principale pour écrans moyens et plus grands */}
         <nav className="hidden md:flex items-center space-x-8">
